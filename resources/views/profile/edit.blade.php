@@ -1,11 +1,7 @@
 <x-app-layout>
-    {{-- LOAD FEATHER ICONS --}}
-    <script src="https://unpkg.com/feather-icons"></script>
-
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 leading-tight tracking-tight flex items-center gap-2">
-                <i data-feather="user" class="text-blue-600"></i>
                 {{ __('Pengaturan Profil') }}
             </h2>
             <nav class="flex text-sm font-medium text-gray-500">

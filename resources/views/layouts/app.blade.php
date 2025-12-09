@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Sistem Alumni') }}</title>
-
-    {{-- Favicon --}}
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo.png">
-    <link rel="apple-touch-icon" href="/assets/logo.png">
-
+    <title>{{ config('app.name', 'Tracer Alumni MA Assaidiyyah Cipanas') }}</title>
+    <link rel="icon" type="image/png" href="/images/logo.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+    <link rel="shortcut icon" href="/images/logo.png">
+    
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

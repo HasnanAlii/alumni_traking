@@ -6,7 +6,7 @@
             {{-- Logo / Header --}}
             <div class="px-6 py-8 flex items-center gap-3">
                 <div class="p-2 bg-blue-50 rounded-lg">
-                    <x-application-logo class="h-8 w-8 text-blue-600" />
+                    <x-application-logo class="h-16 w-16 text-blue-600" />
                 </div>
                 <div>
                     <span class="block text-lg font-bold text-gray-800 tracking-tight">Tracer Alumni</span>

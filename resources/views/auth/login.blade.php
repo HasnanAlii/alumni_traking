@@ -6,12 +6,18 @@
         
         {{-- HEADER LOGO & TEXT (Di luar Card) --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/30 mb-4">
-                <i data-feather="box" class="w-7 h-7"></i>
+            <div class="inline-flex items-center justify-center  bg-green-600 text-white rounded-2xl shadow-lg shadow-blue-500/30 mb-4">
+                <img src="/images/logo.png" alt="Logo" class="w-28 h-28 object-contain">
             </div>
-            <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Selamat Datang Kembali!</h2>
-            <p class="text-sm text-slate-500 mt-2">Silakan masuk untuk mengakses akun Anda.</p>
+
+            <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">
+                Selamat Datang Kembali!
+            </h2>
+            <p class="text-sm text-slate-500 mt-2">
+                Silakan masuk untuk mengakses akun Anda.
+            </p>
         </div>
+
 
         {{-- FORM CONTAINER (Di dalam Card Putih) --}}
         <div class="bg-white shadow-xl shadow-slate-200/60 rounded-3xl overflow-hidden border border-slate-100">

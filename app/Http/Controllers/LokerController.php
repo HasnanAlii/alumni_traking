@@ -15,15 +15,23 @@ class LokerController extends Controller
     public function index()
     {
         $query = Loker::with('alumni')->latest();
+        $filter = request('filter');
 
-        if (request('filter') === 'mine' && auth::check() && auth::user()->alumni) {
+        // FILTER: Pekerjaan Saya
+        if ($filter === 'mine' && Auth::check() && Auth::user()->alumni) {
             $query->where('id_alumni', Auth::user()->alumni->id);
+        }
+
+        // FILTER: Kadaluarsa (masa_aktif < hari ini)
+        if ($filter === 'expired') {
+            $query->whereDate('masa_aktif', '<', now()->toDateString());
         }
 
         $lokers = $query->get();
 
         return view('admin.loker.index', compact('lokers'));
     }
+
 
 
     /**

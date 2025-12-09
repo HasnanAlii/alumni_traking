@@ -6,8 +6,8 @@
         
         {{-- HEADER --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/30 mb-4">
-                <i data-feather="user-plus" class="w-7 h-7"></i>
+            <div class="inline-flex items-center justify-center  bg-green-600 text-white rounded-2xl shadow-lg shadow-blue-500/30 mb-4">
+                <img src="/images/logo.png" alt="Logo" class="w-28 h-28 object-contain">
             </div>
             <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Pendaftaran Alumni</h2>
             <p class="text-sm text-slate-500 mt-2">Isi data di bawah ini untuk bergabung dengan komunitas.</p>
