@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -25,38 +26,41 @@ class ProfileController extends Controller
     }
 
 
-    /**
-     * Update profile information (name, email, foto, password).
-     */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
 
-        // === UPDATE NAMA & EMAIL ===
         $user->name = $request->name;
         $user->email = $request->email;
 
-        // Jika email berubah -> reset verifikasi
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        // === UPDATE FOTO PROFILE ===
+        if ($request->remove_foto == 1 && $user->foto) {
+            Storage::disk('public')->delete($user->foto);
+            $user->foto = null;
+        }
+
         if ($request->hasFile('foto')) {
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
             $path = $request->file('foto')->store('foto-profil', 'public');
             $user->foto = $path;
         }
 
-        // === UPDATE PASSWORD (opsional) ===
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        // Simpan perubahan
         $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
+
     public function updateAlumni(Request $request)
     {
         $request->validate([
@@ -84,9 +88,7 @@ class ProfileController extends Controller
         return back()->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete user account.
-     */
+  
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

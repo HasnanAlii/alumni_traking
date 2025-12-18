@@ -17,11 +17,8 @@
             
             <div class="space-y-8">
                 
-                {{-- SECTION: SUMMARY CARDS (OPSIONAL - CONTOH STATISTIK) --}}
-                {{-- Catatan: Anda perlu mengirim variabel $total_alumni, $total_bekerja, dll dari Controller untuk angka dinamis --}}
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                {{-- CARD: Total Alumni --}}
                 <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 shadow-lg shadow-blue-500/30 text-white relative">
                     <div class="flex items-center gap-4 mb-4">
                         <div class="p-3 bg-white/20 rounded-xl">
@@ -82,23 +79,158 @@
                             </div>
                         @endif
 
-                        {{-- HEADER & ACTIONS --}}
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-6">
+                            {{-- JUDUL --}}
                             <div>
                                 <h3 class="text-xl font-bold text-slate-800">Daftar Alumni</h3>
-                                <p class="text-sm text-slate-500 mt-1">Informasi lengkap mengenai status dan data lulusan.</p>
+                                <p class="text-sm text-slate-500 mt-1">
+                                    Informasi lengkap mengenai status dan data lulusan.
+                                </p>
                             </div>
-                            
-                            <a href="{{ route('admin.alumni.create') }}" 
-                               class="group inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-2xl shadow-lg shadow-blue-500/30 hover:bg-blue-700 hover:shadow-blue-600/40 transition-all duration-300 transform hover:-translate-y-0.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-hover:rotate-90" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                </svg>
-                                Tambah Alumni
-                            </a>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="button"
+                                        onclick="openImportModal()"
+                                        class="group inline-flex items-center justify-center gap-2 
+                                            px-6 py-3 bg-emerald-600 text-white text-sm font-semibold 
+                                            rounded-2xl shadow-lg shadow-emerald-500/30
+                                            hover:bg-emerald-700 hover:shadow-emerald-600/40 
+                                            transition-all duration-300 transform hover:-translate-y-0.5">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 transition-transform group-hover:-rotate-12"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 16l4-5h-3V4h-2v7H8l4 5z"/>
+                                        <path d="M20 18H4v-2h16v2z"/>
+                                    </svg>
+
+                                    Import Alumni
+                                </button>
+                                <div id="importModal"
+                                    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+
+                                    <div id="importModalContent"
+                                        class="bg-white w-full max-w-lg rounded-2xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden">
+
+                                        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                            <div class="flex items-center gap-3">
+                                                <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+                                                    <i data-feather="upload-cloud" class="w-5 h-5"></i>
+                                                </div>
+                                                <div>
+                                                    <h3 class="text-lg font-bold text-slate-800 leading-tight">
+                                                        Import Data Alumni
+                                                    </h3>
+                                                    <p class="text-xs text-slate-500 font-medium">Upload data massal via Excel</p>
+                                                </div>
+                                            </div>
+                                            <button onclick="closeImportModal()"
+                                                    class="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors">
+                                                <i data-feather="x" class="w-5 h-5"></i>
+                                            </button>
+                                        </div>
+
+                                        <form action="{{ route('admin.alumni.import.store') }}"
+                                            method="POST" enctype="multipart/form-data">
+                                            @csrf
+
+                                            <div class="p-6 space-y-6">
+
+                                                <div class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                                                    <i data-feather="info" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                                                    <div class="text-sm">
+                                                        <p class="font-bold text-blue-800 mb-1">Butuh format file?</p>
+                                                        <p class="text-blue-600/80 mb-2">Pastikan kolom excel sesuai dengan sistem.</p>
+                                                     <a href="{{ asset('templates/template_import_alumni.xlsx') }}"
+   class="inline-flex items-center gap-1 text-blue-700 font-bold hover:underline"
+   download>
+    <i data-feather="download" class="w-3 h-3"></i>
+    Download Template
+</a>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="space-y-2">
+                                                    <label class="block text-sm font-bold text-slate-700">
+                                                        Upload File <span class="text-red-500">*</span>
+                                                    </label>
+                                                    
+                                                    <div class="relative group">
+                                                        <input type="file" name="file" id="fileInput"
+                                                            accept=".xlsx,.xls,.csv" required
+                                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                            onchange="updateFileName(this)">
+                                                        
+                                                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:border-emerald-500 group-hover:bg-emerald-50/30 bg-slate-50">
+                                                            
+                                                            <div class="bg-white p-3 rounded-full shadow-sm mb-3 group-hover:scale-110 transition-transform">
+                                                                <i data-feather="file-text" class="w-6 h-6 text-emerald-600"></i>
+                                                            </div>
+                                                            
+                                                            <p class="text-sm font-medium text-slate-700 mb-1">
+                                                                Klik untuk upload atau drag & drop
+                                                            </p>
+                                                            <p class="text-xs text-slate-400">
+                                                                XLSX, XLS, atau CSV (Max 2MB)
+                                                            </p>
+
+                                                            <div id="fileNameDisplay" class="hidden mt-4 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold truncate max-w-[200px]">
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                                <button type="button" onclick="closeImportModal()"
+                                                        class="px-5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition shadow-sm">
+                                                    Batal
+                                                </button>
+
+                                                <button type="submit"
+                                                        class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 hover:shadow-emerald-600/40 transition flex items-center gap-2">
+                                                    <i data-feather="upload" class="w-4 h-4"></i>
+                                                    Import Data
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    function updateFileName(input) {
+                                        const display = document.getElementById('fileNameDisplay');
+                                        if (input.files && input.files[0]) {
+                                            display.textContent = input.files[0].name;
+                                            display.classList.remove('hidden');
+                                        } else {
+                                            display.classList.add('hidden');
+                                        }
+                                    }
+                                </script>
+
+                                <a href="{{ route('admin.alumni.create') }}"
+                                class="group inline-flex items-center justify-center gap-2 
+                                        px-6 py-3 bg-blue-600 text-white text-sm font-semibold 
+                                        rounded-2xl shadow-lg shadow-blue-500/30
+                                        hover:bg-blue-700 hover:shadow-blue-600/40 
+                                        transition-all duration-300 transform hover:-translate-y-0.5">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 transition-transform group-hover:rotate-90"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                            clip-rule="evenodd"/>
+                                    </svg>
+
+                                    Tambah Alumni
+                                </a>
+
+                            </div>
                         </div>
 
-                        {{-- TABLE --}}
+
                         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-slate-100">
@@ -200,7 +332,6 @@
                             </div>
                         </div>
 
-                        {{-- PAGINATION --}}
                         <div class="mt-6">
                             @if(method_exists($alumni, 'links'))
                                 {{ $alumni->links() }}
@@ -212,4 +343,33 @@
             </div>
         </div>
     </div>
+    <script>
+function openImportModal() {
+    const modal = document.getElementById('importModal');
+    const content = document.getElementById('importModalContent');
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+        feather.replace();
+    }, 10);
+}
+
+function closeImportModal() {
+    const modal = document.getElementById('importModal');
+    const content = document.getElementById('importModalContent');
+
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 200);
+}
+</script>
+
 </x-app-layout>

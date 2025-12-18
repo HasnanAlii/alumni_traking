@@ -23,16 +23,13 @@
 
             <div class="bg-white shadow-xl shadow-slate-200/60 rounded-3xl overflow-hidden border border-slate-100">
 
-                {{-- SECTION 1: HEADER PROFIL --}}
                 <div class="p-8 md:p-10 bg-slate-50/50 border-b border-slate-100 flex flex-col md:flex-row items-center md:items-start gap-6">
                     
-                    {{-- FOTO PROFIL (Mengambil dari relation user jika ada, atau fallback avatar) --}}
                     <div class="relative shrink-0">
                         <img src="{{ $alumni->user && $alumni->user->foto ? asset('storage/'.$alumni->user->foto) : 'https://ui-avatars.com/api/?name='.urlencode($alumni->nama).'&background=EBF4FF&color=3B82F6&size=128' }}" 
                              alt="{{ $alumni->nama }}" 
                              class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
                         
-                        {{-- Badge Gender --}}
                         <div class="absolute bottom-2 right-2 p-1.5 rounded-full text-white shadow-sm {{ $alumni->jenis_kelamin == 'L' ? 'bg-blue-500' : 'bg-pink-500' }}">
                             @if($alumni->jenis_kelamin == 'L')
                                 <i data-feather="user" class="w-4 h-4"></i>
@@ -42,18 +39,15 @@
                         </div>
                     </div>
 
-                    {{-- NAMA & STATUS --}}
                     <div class="text-center md:text-left flex-1 space-y-2">
                         <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">{{ $alumni->nama }}</h1>
                         
                         <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-2">
-                            {{-- Badge Tahun Lulus --}}
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-700">
                                 <i data-feather="award" class="w-3 h-3"></i>
                                 Angkatan {{ $alumni->tahun_lulus }}
                             </span>
 
-                            {{-- Badge Status Bekerja --}}
                             @php
                                 $status = strtolower($alumni->status_bekerja);
                                 $color = 'bg-slate-100 text-slate-600';
@@ -68,7 +62,6 @@
                         </div>
                     </div>
 
-                    {{-- TOMBOL EDIT DI HEADER (Desktop) --}}
                     <div class="hidden md:block">
                         <a href="{{ route('admin.alumni.edit', $alumni->id) }}" 
                            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-all shadow-sm">
@@ -78,17 +71,14 @@
                     </div>
                 </div>
 
-                {{-- SECTION 2: DETAIL INFORMASI --}}
                 <div class="p-8 md:p-10">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
 
-                        {{-- KOLOM KIRI --}}
                         <div class="space-y-6">
                             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">
                                 Informasi Pribadi
                             </h4>
 
-                            {{-- Tanggal Lahir --}}
                             <div class="flex items-start gap-4">
                                 <div class="p-2.5 bg-slate-50 rounded-lg text-slate-400">
                                     <i data-feather="calendar" class="w-5 h-5"></i>
@@ -101,7 +91,6 @@
                                 </div>
                             </div>
 
-                            {{-- Jenis Kelamin --}}
                             <div class="flex items-start gap-4">
                                 <div class="p-2.5 bg-slate-50 rounded-lg text-slate-400">
                                     <i data-feather="users" class="w-5 h-5"></i>
@@ -115,7 +104,6 @@
                             </div>
                         </div>
 
-                        {{-- KOLOM KANAN --}}
                         <div class="space-y-6">
                             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">
                                 Kontak & Akun
@@ -127,14 +115,13 @@
                                     <i data-feather="mail" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium text-slate-500">Email Akun</p>
+                                    <p class="text-sm font-medium text-slate-500">Email</p>
                                     <p class="text-lg font-bold text-slate-700">
                                         {{ $alumni->user->email ?? '-' }}
                                     </p>
                                 </div>
                             </div>
 
-                            {{-- Telepon --}}
                             <div class="flex items-start gap-4">
                                 <div class="p-2.5 bg-slate-50 rounded-lg text-slate-400">
                                     <i data-feather="phone" class="w-5 h-5"></i>
@@ -147,7 +134,6 @@
                                 </div>
                             </div>
 
-                            {{-- Alamat --}}
                             <div class="flex items-start gap-4">
                                 <div class="p-2.5 bg-slate-50 rounded-lg text-slate-400">
                                     <i data-feather="map-pin" class="w-5 h-5"></i>
@@ -164,7 +150,6 @@
                     </div>
                 </div>
 
-                {{-- SECTION 3: FOOTER ACTIONS --}}
                 <div class="bg-slate-50 px-8 py-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
                     
                     <a href="{{ route('admin.alumni.index') }}" 
@@ -174,7 +159,6 @@
                     </a>
 
                     <div class="flex gap-3 w-full sm:w-auto">
-                        {{-- Tombol Edit (Mobile Only - karena desktop ada di header) --}}
                         <a href="{{ route('admin.alumni.edit', $alumni->id) }}"
                            class="sm:hidden flex-1 inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all">
                            <i data-feather="edit-2" class="w-4 h-4"></i>
@@ -201,10 +185,5 @@
         </div>
     </div>
 
-    {{-- INITIALIZE FEATHER ICONS --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            feather.replace();
-        });
-    </script>
+  
 </x-app-layout>

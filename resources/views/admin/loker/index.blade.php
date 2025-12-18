@@ -5,7 +5,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 leading-tight tracking-tight flex items-center gap-2">
-                {{ __('Bursa Kerja (Feed)') }}
+                {{ __('Lowongan Kerja') }}
             </h2>
             <nav class="flex text-sm font-medium text-gray-500">
                 <a href="{{ route('dashboard') }}" class="hover:text-blue-600 cursor-pointer transition">Dashboard</a>
@@ -17,8 +17,6 @@
 
     <div class="py-12 bg-slate-100 min-h-screen px-4 sm:px-10">
         <div class="mx-auto max-w-4xl space-y-8">
-            
-
             @if (session('success'))
                 <div x-data="{ show: true }" x-show="show" class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-between shadow-sm">
                     <div class="flex items-center gap-3">

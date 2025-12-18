@@ -5,7 +5,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 leading-tight flex items-center gap-2">
-                {{ __('Dashboard') }}
+                {{ __('Beranda') }}
             </h2>
             <div class="text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100 flex items-center gap-2">
                 <i data-feather="calendar" class="w-4 h-4 text-blue-500"></i>

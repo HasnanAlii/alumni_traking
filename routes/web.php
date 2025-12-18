@@ -24,11 +24,18 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+         Route::post('alumni/import', [AlumniController::class, 'import'])->name('alumni.import.store');
          Route::resource('alumni', AlumniController::class);
+         Route::get('/alumni/template', function () {
+            return response()->download(
+                public_path('templates/template_import_alumni.xlsx'),
+                'template-import-alumni.xlsx'
+            );
+        })->name('alumni.template');
+
+
 
 });
-
-
 
 Route::middleware(['auth', 'role:alumni'])->name('alumni.')->group(function () {
     Route::resource('loker', LokerController::class);
@@ -39,8 +46,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/notifications', [NotificationController::class, 'list'])->name('notifications.list');
         Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.readAll');
         Route::resource('loker', LokerController::class);
-
-
 });
 
 

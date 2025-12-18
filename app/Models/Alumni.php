@@ -22,17 +22,12 @@ class Alumni extends Model
         'id_user',
     ];
 
-    /**
-     * Relasi ke User
-     */
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    /**
-     * Relasi ke Loker (satu alumni bisa membuat banyak loker)
-     */
     public function lokers()
     {
         return $this->hasMany(Loker::class, 'id_alumni');

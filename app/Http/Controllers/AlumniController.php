@@ -7,13 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Imports\AlumniImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rule;
 
 class AlumniController extends Controller
 {
-    /**
-     * Menampilkan semua alumni
-     */
+
     public function index()
     {
         $alumni = Alumni::latest()->paginate(10);
@@ -29,18 +29,26 @@ class AlumniController extends Controller
             'total_belum_bekerja',
         ));
     }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv'
+        ]);
 
-    /**
-     * Form tambah alumni
-     */
+        Excel::import(new AlumniImport, $request->file('file'));
+
+        return redirect()
+            ->route('admin.alumni.index')
+            ->with('success', 'Data alumni berhasil diimport');
+    }
+
+ 
     public function create()
     {
         return view('admin.alumni.create');
     }
 
-    /**
-     * Simpan alumni baru + buat akun user alumni
-     */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -59,19 +67,16 @@ class AlumniController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            // 1. Buat User
             $user = User::create([
                 'name'     => $validated['nama'],
                 'email'    => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);
 
-            // Beri role alumni (pastikan role sudah ada)
             if (method_exists($user, 'assignRole')) {
                 $user->assignRole('alumni');
             }
 
-            // 2. Buat Alumni
             Alumni::create([
                 'nama'           => $validated['nama'],
                 'tahun_lulus'    => $validated['tahun_lulus'] ?? null,
@@ -89,33 +94,25 @@ class AlumniController extends Controller
             ->with('success', 'Data alumni dan akun user berhasil ditambahkan.');
     }
 
-    /**
-     * Detail alumni
-     */
+
     public function show($id)
     {
         $alumni = Alumni::with('user')->findOrFail($id);
         return view('admin.alumni.show', compact('alumni'));
     }
 
-    /**
-     * Form edit alumni + user
-     */
+
     public function edit($id)
     {
         $alumni = Alumni::with('user')->findOrFail($id);
         return view('admin.alumni.edit', compact('alumni'));
     }
 
-    /**
-     * Update alumni + akun user alumni
-     */
     public function update(Request $request, $id)
     {
         $alumni = Alumni::with('user')->findOrFail($id);
 
         $validated = $request->validate([
-            // Alumni
             'nama'           => 'required|string|max:255',
             'tahun_lulus'    => 'nullable|digits:4',
             'telp'           => 'nullable|string|max:20',
@@ -124,7 +121,6 @@ class AlumniController extends Controller
             'tanggal_lahir'  => 'nullable|date',
             'alamat'         => 'nullable|string',
 
-            // User
             'email' => [
                 'required',
                 'email',
@@ -135,9 +131,7 @@ class AlumniController extends Controller
 
         DB::transaction(function () use ($validated, $alumni) {
 
-            // 1. Update / buat user
             if ($alumni->user) {
-                // Update user yang sudah ada
                 $user = $alumni->user;
                 $user->name  = $validated['nama'];
                 $user->email = $validated['email'];
@@ -148,13 +142,12 @@ class AlumniController extends Controller
 
                 $user->save();
             } else {
-                // Kalau belum punya user, buat baru
                 $user = User::create([
                     'name'     => $validated['nama'],
                     'email'    => $validated['email'],
                     'password' => !empty($validated['password'])
                         ? Hash::make($validated['password'])
-                        : Hash::make('password123'), // default jika admin lupa isi
+                        : Hash::make('password'), 
                 ]);
 
                 if (method_exists($user, 'assignRole')) {
@@ -164,7 +157,6 @@ class AlumniController extends Controller
                 $alumni->id_user = $user->id;
             }
 
-            // 2. Update Alumni
             $alumni->nama           = $validated['nama'];
             $alumni->tahun_lulus    = $validated['tahun_lulus'] ?? null;
             $alumni->telp           = $validated['telp'] ?? null;
@@ -181,9 +173,7 @@ class AlumniController extends Controller
             ->with('success', 'Data alumni dan akun user berhasil diperbarui.');
     }
 
-    /**
-     * Hapus alumni (+ opsional hapus user)
-     */
+ 
     public function destroy($id)
     {
         $alumni = Alumni::with('user')->findOrFail($id);

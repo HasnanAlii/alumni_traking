@@ -34,9 +34,7 @@
                         @csrf
                         @method('PUT')
 
-                        {{-- =========================
-                             SECTION 1: AKUN USER
-                        ========================= --}}
+               
                         <div>
                             <div class="flex items-center gap-2 mb-6 pb-2 border-b border-slate-100">
                                 <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
@@ -44,37 +42,37 @@
                                 </div>
                                 <h4 class="text-base font-bold text-slate-700 uppercase tracking-wide">Informasi Akun (Login)</h4>
                             </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {{-- EMAIL --}}
-    <div>
-        <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <i data-feather="mail" class="w-4 h-4"></i>
-            </div>
-            <input type="email" name="email"
-                   class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50
-                          focus:bg-white focus:border-blue-500 focus:ring-blue-500 py-3 transition-all"
-                   value="{{ old('email', $alumni->user->email) }}" required>
-        </div>
-    </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {{-- EMAIL --}}
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                        <i data-feather="mail" class="w-4 h-4"></i>
+                                    </div>
+                                    <input type="email" name="email"
+                                        class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50
+                                                focus:bg-white focus:border-blue-500 focus:ring-blue-500 py-3 transition-all"
+                                        value="{{ old('email', $alumni->user->email) }}" required>
+                                </div>
+                            </div>
 
-    {{-- PASSWORD --}}
-    <div>
-        <label class="block text-sm font-bold text-slate-700 mb-2">
-            Password Baru <span class="text-slate-400 font-normal text-xs">(Opsional)</span>
-        </label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <i data-feather="key" class="w-4 h-4"></i>
-            </div>
-            <input type="password" name="password"
-                   class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50
-                          focus:bg-white focus:border-blue-500 focus:ring-blue-500 py-3 transition-all"
-                   placeholder="Kosongkan jika tidak diganti">
-        </div>
-    </div>
-</div>
+                            {{-- PASSWORD --}}
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">
+                                    Password Baru <span class="text-slate-400 font-normal text-xs">(Opsional)</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                        <i data-feather="key" class="w-4 h-4"></i>
+                                    </div>
+                                    <input type="password" name="password"
+                                        class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50
+                                                focus:bg-white focus:border-blue-500 focus:ring-blue-500 py-3 transition-all"
+                                        placeholder="Kosongkan jika tidak diganti">
+                                </div>
+                            </div>
+                        </div>
 
                         </div>
 

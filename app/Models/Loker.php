@@ -20,6 +20,11 @@ class Loker extends Model
         'masa_aktif'
 
     ];
+    
+    protected $casts = [
+    'masa_aktif' => 'date',
+    ];
+
 
     /**
      * Relasi ke Alumni

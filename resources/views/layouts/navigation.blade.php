@@ -90,16 +90,30 @@
         <div class="p-4 border-t border-gray-100 bg-gray-50">
 
             <div class="flex items-center gap-4 mb-4 px-2">
-                <div class="h-12 w-12 rounded-full bg-white border border-blue-100 shadow flex items-center justify-center 
-                            text-blue-600 font-bold text-lg uppercase">
-                    {{ substr(Auth::user()->name, 0, 1) }}
-                </div>
+                @if(Auth::user()->foto)
+                    <img 
+                        src="{{ asset('storage/' . Auth::user()->foto) }}" 
+                        alt="Foto Profil"
+                        class="h-12 w-12 rounded-full object-cover border border-blue-100 shadow"
+                    >
+                @else
+                    <div class="h-12 w-12 rounded-full bg-white border border-blue-100 shadow 
+                                flex items-center justify-center 
+                                text-blue-600 font-bold text-lg uppercase">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </div>
+                @endif
 
                 <div class="overflow-hidden leading-tight">
-                    <div class="font-bold text-gray-800 truncate text-base">{{ Auth::user()->name }}</div>
-                    <div class="text-sm text-gray-500 truncate">{{ Auth::user()->email }}</div>
+                    <div class="font-bold text-gray-800 truncate text-base">
+                        {{ Auth::user()->name }}
+                    </div>
+                    <div class="text-sm text-gray-500 truncate">
+                        {{ Auth::user()->email }}
+                    </div>
                 </div>
             </div>
+
 
             <div class="grid grid-cols-2 gap-3">
                 {{-- Profile --}}

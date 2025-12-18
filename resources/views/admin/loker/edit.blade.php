@@ -1,7 +1,4 @@
 <x-app-layout>
-    {{-- LOAD FEATHER ICONS --}}
-    <script src="https://unpkg.com/feather-icons"></script>
-
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 leading-tight tracking-tight flex items-center gap-2">
@@ -24,7 +21,6 @@
             <div class="bg-white shadow-xl shadow-slate-200/60 rounded-3xl overflow-hidden border border-slate-100">
                 
                 <div class="p-8 md:p-10">
-                    {{-- TITLE --}}
                     <div class="mb-8 border-b border-slate-100 pb-4">
                         <h3 class="text-lg font-bold text-slate-800">Formulir Edit Loker</h3>
                         <p class="text-sm text-slate-500">Perbarui informasi lowongan kerja di bawah ini.</p>
@@ -34,13 +30,11 @@
                         @csrf
                         @method('PUT')
 
-                        {{-- PEMBUAT (READONLY) --}}
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                 Diposting Oleh
                             </label>
                             
-                            {{-- Hidden Input ID Alumni --}}
                             <input type="hidden" name="id_alumni" value="{{ $loker->id_alumni ?? '' }}">
 
                             <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 rounded-xl border border-slate-200">
@@ -56,10 +50,8 @@
                             <p class="text-xs text-slate-400 mt-1">*Pembuat postingan tidak dapat diubah.</p>
                         </div>
 
-                        {{-- GRID 2 KOLOM UNTUK NAMA & LOKASI --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             
-                            {{-- NAMA LOKER --}}
                             <div>
                                 <label for="nama" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                     Nama Posisi / Loker <span class="text-red-500">*</span>
@@ -75,7 +67,6 @@
                                 @error('nama') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            {{-- LOKASI --}}
                             <div>
                                 <label for="lokasi" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                     Lokasi Penempatan
@@ -91,24 +82,33 @@
                                 @error('lokasi') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
                         </div>
-
-                        {{-- MASA AKTIF --}}
+              
                         <div>
-                            <label for="masa_aktif" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
+                            <label for="masa_aktif"
+                                class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                 Masa Aktif Lowongan <span class="text-red-500">*</span>
                             </label>
+
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i data-feather="calendar" class="w-5 h-5 text-slate-400"></i>
                                 </div>
-                                <input type="date" name="masa_aktif" id="masa_aktif"
-                                       class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                       value="{{ old('masa_aktif', $loker->masa_aktif) }}" required>
+
+                                <input type="date"
+                                    name="masa_aktif"
+                                    id="masa_aktif"
+                                    class="pl-10 w-full rounded-xl border-slate-200 bg-slate-50
+                                            focus:bg-white focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    value="{{ old('masa_aktif', optional($loker->masa_aktif)->format('Y-m-d')) }}"
+                                    required>
                             </div>
-                             @error('masa_aktif') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+
+                            @error('masa_aktif')
+                                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                            @enderror
                         </div>
 
-                        {{-- DESKRIPSI --}}
+
                         <div>
                             <label for="deskripsi" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                 Deskripsi Pekerjaan
@@ -124,16 +124,13 @@
                              @error('deskripsi') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
-                        {{-- UPLOAD FOTO (DENGAN PREVIEW YANG DIPERBAIKI) --}}
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">
                                 Banner / Foto Loker
                             </label>
                             
-                            {{-- Container Preview --}}
                            <div class="mt-1 relative group w-full border-2 border-slate-300 border-dashed rounded-xl overflow-hidden hover:bg-slate-50 transition-colors bg-white">
 
-                                {{-- 1. Placeholder --}}
                                 <div id="upload-placeholder" 
                                     class="{{ $loker->foto ? 'hidden' : 'flex' }} 
                                         w-full h-64 absolute inset-0 flex-col items-center justify-center pointer-events-none">
@@ -144,23 +141,19 @@
                                     </div>
                                 </div>
 
-                                {{-- 2. Gambar Lama (FULL HEIGHT auto) --}}
                                 <img id="current-image"
                                     src="{{ $loker->foto ? asset('storage/'.$loker->foto) : '#' }}"
                                     class="{{ $loker->foto ? 'block' : 'hidden' }} 
                                             w-full object-contain bg-white">
 
-                                {{-- 3. Preview Baru --}}
                                 <img id="preview-image-new"
                                     src="#"
                                     class="hidden w-full object-contain bg-white z-20">
 
-                                {{-- 4. Input File --}}
                                 <input id="foto" name="foto" type="file"
                                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30"
                                     onchange="previewFile()">
 
-                                {{-- 5. Overlay --}}
                                 <div id="change-overlay"
                                     class="{{ $loker->foto ? 'flex' : 'hidden' }} 
                                             absolute inset-0 bg-black/40 items-center justify-center z-20 pointer-events-none 
@@ -175,7 +168,6 @@
                              @error('foto') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
-                        {{-- BUTTONS --}}
                         <div class="pt-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3">
                             <a href="{{ route('loker.index') }}" 
                                class="inline-flex justify-center items-center px-6 py-3 border border-slate-300 shadow-sm text-sm font-bold rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all">
@@ -194,7 +186,6 @@
         </div>
     </div>
 
-    {{-- SCRIPT PREVIEW (DIPERBAIKI) --}}
     <script>
         function previewFile() {
             const previewNew = document.getElementById('preview-image-new');
@@ -208,15 +199,12 @@
                 const reader = new FileReader();
 
                 reader.onload = function(e) {
-                    // Tampilkan gambar baru
                     previewNew.src = e.target.result;
                     previewNew.classList.remove('hidden');
                     
-                    // Sembunyikan gambar lama dan placeholder
                     currentImage.classList.add('hidden');
                     placeholder.classList.add('hidden');
                     
-                    // Tampilkan overlay agar siap di-hover
                     overlay.classList.remove('hidden');
                     overlay.classList.add('flex');
                 }
@@ -225,9 +213,6 @@
             }
         }
 
-        // Inisialisasi Feather Icons
-        document.addEventListener("DOMContentLoaded", function() {
-            feather.replace();
-        });
+   
     </script>
 </x-app-layout>

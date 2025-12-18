@@ -1,7 +1,4 @@
 <x-app-layout>
-    {{-- LOAD FEATHER ICONS --}}
-    <script src="https://unpkg.com/feather-icons"></script>
-
     <x-slot name="header">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="font-extrabold text-2xl text-gray-800 leading-tight tracking-tight flex items-center gap-2">
@@ -23,7 +20,6 @@
 
             <div class="bg-white shadow-xl shadow-slate-200/60 rounded-3xl overflow-hidden border border-slate-100">
 
-                {{-- Header Form --}}
                 <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
                     <h3 class="text-lg font-bold text-slate-800">Formulir Registrasi Alumni</h3>
                     <p class="text-sm text-slate-500">Masukkan data akun dan biodata alumni baru.</p>
@@ -33,9 +29,6 @@
                     <form action="{{ route('admin.alumni.store') }}" method="POST" class="space-y-8">
                         @csrf
 
-                        {{-- =========================
-                             SECTION 1: AKUN USER
-                        ========================= --}}
                         <div>
                             <div class="flex items-center gap-2 mb-6 pb-2 border-b border-slate-100">
                                 <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
@@ -76,10 +69,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- =========================
-                             SECTION 2: BIODATA
-                        ========================= --}}
                         <div>
                             <div class="flex items-center gap-2 mb-6 pb-2 border-b border-slate-100">
                                 <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
@@ -184,7 +173,6 @@
                                     </div>
                                 </div>
 
-                                {{-- ALAMAT --}}
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Lengkap</label>
                                     <div class="relative">
@@ -199,7 +187,6 @@
                             </div>
                         </div>
 
-                        {{-- FOOTER BUTTONS --}}
                         <div class="pt-6 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3">
                             <a href="{{ route('admin.alumni.index') }}" 
                                class="inline-flex justify-center items-center px-6 py-3 border border-slate-300 shadow-sm text-sm font-bold rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all">
@@ -220,10 +207,4 @@
         </div>
     </div>
 
-    {{-- INITIALIZE FEATHER ICONS --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            feather.replace();
-        });
-    </script>
 </x-app-layout>

@@ -53,30 +53,39 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             
-                            {{-- KOLOM KIRI: FOTO PROFIL --}}
                        <div class="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
 
-                                <div class="relative group">
-                                    {{-- PREVIEW GAMBAR --}}
-                                    <img id="preview-profile"
-                                        src="{{ $user->foto 
-                                                ? asset('storage/'.$user->foto) 
-                                                : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=EBF4FF&color=3B82F6' }}"
-                                        class="h-32 w-32 rounded-full object-cover shadow-md border-4 border-white 
-                                                group-hover:scale-105 transition-transform duration-300">
+                      <div class="relative group">
+                            <img id="preview-profile"
+                                src="{{ $user->foto 
+                                        ? asset('storage/'.$user->foto) 
+                                        : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=EBF4FF&color=3B82F6' }}"
+                                class="h-32 w-32 rounded-full object-cover shadow-md border-4 border-white 
+                                        group-hover:scale-105 transition-transform duration-300">
 
-                                    {{-- BUTTON UPLOAD --}}
-                                    <label for="foto"
-                                        class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer 
-                                                hover:bg-blue-700 shadow-lg transition-colors">
-                                        <i data-feather="camera" class="w-4 h-4"></i>
-                                        <input type="file" id="foto" name="foto" class="hidden" accept="image/*" onchange="previewProfilePhoto()">
-                                    </label>
-                                </div>
+                            <label for="foto"
+                                class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full cursor-pointer 
+                                        hover:bg-blue-700 shadow-lg transition-colors">
+                                <i data-feather="camera" class="w-4 h-4"></i>
+                                <input type="file" id="foto" name="foto" class="hidden" accept="image/*" onchange="previewProfilePhoto()">
+                            </label>
+
+                            @if($user->foto)
+                                <button type="button"
+                                    onclick="removeProfilePhoto()"
+                                    class="absolute bottom-0 left-0 bg-red-500 text-white p-2 rounded-full 
+                                        hover:bg-red-600 shadow-lg transition">
+                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            @endif
+                        </div>
+
+                        <input type="hidden" name="remove_foto" id="remove_foto" value="0">
+
 
                                 <p class="text-xs text-slate-400 mt-4 text-center">
                                     Klik ikon kamera untuk mengganti foto.<br>
-                                    Max size: 10MB.
+                                    Max size: 5MB.
                                 </p>
 
                                 <x-input-error :messages="$errors->get('foto')" class="mt-2 text-center" />
@@ -141,13 +150,10 @@
             </div>
 
 
-            {{-- ========================== --}}
-            {{--   CARD 2: BIODATA ALUMNI   --}}
-            {{-- ========================== --}}
+   
             @hasrole('alumni')
             <div class="bg-white shadow-xl shadow-slate-200/60 rounded-3xl overflow-hidden border border-slate-100">
                 
-                {{-- Card Header --}}
                 <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/50">
                     <div class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
                         <i data-feather="file-text" class="w-6 h-6"></i>
@@ -165,7 +171,6 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                            {{-- Nama Alumni --}}
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap (Sesuai Ijazah)</label>
                                 <input type="text" name="nama"
@@ -173,7 +178,6 @@
                                     value="{{ old('nama', $alumni->nama) }}" required>
                             </div>
 
-                            {{-- Tahun Lulus --}}
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-2">Tahun Lulus</label>
                                 <div class="relative">
@@ -186,7 +190,6 @@
                                 </div>
                             </div>
 
-                            {{-- Telepon --}}
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-2">No. WhatsApp / Telepon</label>
                                 <div class="relative">
@@ -287,5 +290,19 @@ function previewProfilePhoto() {
     }
 }
 </script>
+<script>
+function removeProfilePhoto() {
+    if (!confirm('Hapus foto profil?')) return;
+
+    const preview = document.getElementById('preview-profile');
+    const input = document.getElementById('foto');
+    const removeInput = document.getElementById('remove_foto');
+
+    preview.src = "{{ 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=EBF4FF&color=3B82F6' }}";
+    input.value = '';
+    removeInput.value = 1;
+}
+</script>
+
 
 </x-app-layout>
