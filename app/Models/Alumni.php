@@ -20,6 +20,8 @@ class Alumni extends Model
         'tanggal_lahir',
         'alamat',
         'id_user',
+        'wa_opt_in',
+        'wa_blocked'
     ];
 
 

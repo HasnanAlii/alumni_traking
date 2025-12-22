@@ -21,6 +21,8 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable(); 
             $table->text('alamat')->nullable(); 
             $table->foreignId('id_user')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->boolean('wa_opt_in')->default(false);
+            $table->boolean('wa_blocked')->default(false);
             $table->timestamps(); 
         });
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -16,146 +15,97 @@ class SendWaNotificationJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $backoff = 30;
+    public $backoff = 60;
 
-    public $target;
-    public $pesan;
+    protected $target;
+    protected string $pesan;
 
-    /**
-     * @param mixed $target string|Model|array
-     */
     public function __construct($target, string $pesan)
     {
         $this->target = $target;
         $this->pesan  = $pesan;
     }
 
- 
+    /* ===============================
+       NORMALISASI NOMOR
+    =============================== */
     protected function extractPhone($input): ?string
     {
-        if (is_string($input)) {
-            $trim = trim($input);
-            if ((str_starts_with($trim, '{') || str_starts_with($trim, '[')) && $json = json_decode($trim, true)) {
-                $input = $json;
-            } else {
-                $tel = preg_replace('/\D+/', '', $input);
-                if (preg_match('/^0+/', $tel)) {
-                    $tel = preg_replace('/^0+/', '62', $tel);
-                }
-                if (!preg_match('/^62/', $tel)) {
-                    $tel = '62' . ltrim($tel, '0');
-                }
-                return strlen($tel) >= 9 ? $tel : null;
-            }
-        }
-
         if ($input instanceof Model) {
-            foreach (['telp', 'phone', 'no_hp', 'telepon', 'telephone'] as $attr) {
-                if ($input->getAttribute($attr)) {
-                    return $this->extractPhone($input->getAttribute($attr));
-                }
-            }
-
-            $arr = $input->toArray();
-            $phone = $this->extractPhone($arr);
-            return $phone;
+            $input = $input->telp ?? $input->phone ?? null;
         }
 
-        if (is_array($input)) {
-            foreach (['telp', 'phone', 'no_hp', 'telepon', 'telephone', 'target'] as $k) {
-                if (isset($input[$k]) && $input[$k]) {
-                    return $this->extractPhone($input[$k]);
-                }
-            }
-            return null;
+        if (!$input) return null;
+
+        $telp = preg_replace('/\D+/', '', $input);
+
+        if (preg_match('/^0/', $telp)) {
+            $telp = '62' . substr($telp, 1);
         }
 
-        return null;
+        if (!str_starts_with($telp, '62')) {
+            $telp = '62' . $telp;
+        }
+
+        return strlen($telp) >= 9 ? $telp : null;
     }
 
     public function handle(): void
     {
-        $rawTarget = $this->target;
-
-        $telp = $this->extractPhone($rawTarget);
-
-        if (empty($telp)) {
-            Log::warning("SendWaNotificationJob: gagal — tidak menemukan nomor telepon dari target", [
-                'target_raw' => $rawTarget,
-            ]);
-            return; 
+        // 🚨 GLOBAL PAUSE
+        if (cache()->get('wa_global_pause')) {
+            Log::warning("WA PAUSE aktif, job dilewati");
+            return;
         }
 
-        Log::info("WA JOB → Mengirim WA ke target", ['target' => $telp]);
+        $telp = $this->extractPhone($this->target);
 
-        $payload = [
+        if (!$telp) {
+            Log::warning("WA JOB: nomor tidak valid", ['target' => $this->target]);
+            return;
+        }
+
+        Log::info("WA JOB → Kirim ke {$telp}");
+
+        $response = Http::withHeaders([
+            'Authorization' => env('FONNTE_TOKEN'),
+            'Accept'        => 'application/json',
+        ])->timeout(30)->post('https://api.fonnte.com/send', [
             'target'      => $telp,
             'message'     => $this->pesan,
             'countryCode' => '62',
-        ];
-
-        try {
-            $response = Http::withHeaders([
-               'Authorization' => 'pANbKpk5VMVSHXsGwMyx',
-                'Accept'        => 'application/json',
-            ])->timeout(30)
-              ->post('https://api.fonnte.com/send', $payload);
-
-            $httpStatus = $response->status();
-            $body = null;
-            try {
-                $body = $response->json();
-            } catch (\Throwable $e) {
-                $body = ['raw_body' => $response->body()];
-            }
-
-            Log::info("WA JOB → Response Fonnte", ['status' => $httpStatus, 'body' => $body]);
-
-            $providerStatus = null;
-            if (is_array($body) && isset($body['status'])) {
-                $providerStatus = $body['status'];
-            } elseif (is_array($body) && isset($body['response']['status'])) {
-                $providerStatus = $body['response']['status'];
-            }
-
-            if ($httpStatus >= 500 || $httpStatus == 429) {
-                throw new \Exception("Provider HTTP {$httpStatus}");
-            }
-
-            if ($providerStatus === false) {
-                $reason = $body['response']['reason'] ?? ($body['reason'] ?? null);
-                $reasonL = strtolower((string) $reason);
-                Log::warning("WA JOB → provider returned status:false", ['reason' => $reason, 'target' => $telp]);
-
-                if (str_contains($reasonL, 'disconnected') || str_contains($reasonL, 'device')) {
-                    throw new \Exception("Provider disconnected: " . $reason);
-                }
-
-                Log::error("WA JOB → permanent failure, skip", ['target' => $telp, 'reason' => $reason, 'body' => $body]);
-                return;
-            }
-
-            if ($httpStatus >= 200 && $httpStatus < 300 && ($providerStatus === true || $providerStatus === null)) {
-                Log::info("WA JOB → berhasil mengirim ke {$telp}", ['provider_body' => $body]);
-                return;
-            }
-
-            throw new \Exception("Unexpected provider response");
-        } catch (\Throwable $e) {
-            Log::error("WA JOB → Gagal mengirim ke {$telp}: " . $e->getMessage(), [
-                'exception' => $e,
-            ]);
-            throw $e; 
-        }
-    }
-
-    public function failed(\Throwable $exception)
-    {
-        Log::error("SendWaNotificationJob failed permanently: " . $exception->getMessage(), [
-            'target_raw' => $this->target,
-            'pesan' => $this->pesan,
         ]);
 
-       
+        $body = $response->json();
+
+        if ($response->status() == 429 || $response->status() >= 500) {
+            throw new \Exception("Provider error {$response->status()}");
+        }
+
+        if (isset($body['status']) && $body['status'] === false) {
+            $reason = strtolower($body['reason'] ?? '');
+
+            if (str_contains($reason, 'disconnect') || str_contains($reason, 'device')) {
+                cache()->put('wa_global_pause', true, now()->addMinutes(30));
+                throw new \Exception("Device WA disconnected");
+            }
+
+            Log::error("WA JOB gagal permanen", [
+                'target' => $telp,
+                'reason' => $body
+            ]);
+
+            return;
+        }
+
+        Log::info("WA JOB berhasil", ['target' => $telp]);
+    }
+
+    public function failed(\Throwable $e)
+    {
+        Log::error("WA JOB FAILED TOTAL", [
+            'error' => $e->getMessage(),
+            'target' => $this->target
+        ]);
     }
 }
